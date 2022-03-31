@@ -26,7 +26,7 @@ function WordCloud(options) {
   
     var data;
 
-    var global_temp_font_size;
+    var global_temp_font_size, global_temp_color;
 
     d3.json(options.data, function(error, d) {
       if (error) throw error;
@@ -81,16 +81,16 @@ function WordCloud(options) {
         // font-size: 100px; font-family: Impact; fill: rgb(255, 204, 51);
 
         temp_font_size = d3.select(this).style("font-size");
-        parsed_font_size = temp_font_size.substring(0, temp_font_size.length-2);
+        temp_color = d3.select(this).style("fill");
 
-        console.log(parsed_font_size + 2)
-        console.log(parseFloat(parsed_font_size)+2.0)
-         
+        parsed_font_size = parseFloat(temp_font_size.substring(0, temp_font_size.length-2));
         global_temp_font_size = parsed_font_size;
+        global_temp_color = temp_color
+
         
         d3.select(this).classed("word-hovered", true)
         .transition(`mouseover-${d.key}`).duration(1000).attr(
-            "style", function(d,i) { return "font-size : " + parseFloat(parsed_font_size)+2 + "px; font-family : Impact; fill : " + colorMap[~~(arng() *18)] + ";" }
+            "style", function(d,i) { return "font-size : " + (parsed_font_size+15) + "px; font-family : Impact; fill : " + temp_color + ";" }
             );
 
         var group = focus.append('g').attr('id', 'story-titles');
@@ -122,7 +122,7 @@ function WordCloud(options) {
   
     function handleMouseOut(d) {
       d3.select(this).classed("word-hovered", false).interrupt(`mouseover-${d.key}`).attr(
-            "style", function(d,i) { return "font-size : " + global_temp_font_size + "px; font-family : Impact; fill : " + colorMap[~~(arng() *18)] + ";" }
+            "style", function(d,i) { return "font-size : " + global_temp_font_size + "px; font-family : Impact; fill : " + global_temp_color + ";" }
             )
       d3.select('#story-titles').remove();
     }
