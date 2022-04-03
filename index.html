@@ -16,12 +16,17 @@
 <body>
 
   <div id='cloud-container1'></div>
+  <div id='cloud-container2'></div>
 
   <script src="wordcloud.js"></script>
   <script>
   WordCloud({
     container: '#cloud-container1',
     data: 'wolfstar.json'
+  });
+  WordCloud({
+    container: '#cloud-container2',
+    data: 'wolfstar copy.json'
   });
 
   </script>

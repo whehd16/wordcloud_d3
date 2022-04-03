@@ -1,25 +1,42 @@
 function WordCloud(options) {
-    var margin = {top: 70, right: 100, bottom: 0, left: 100},
-             w = 1200 - margin.left - margin.right,
-             h = 400 - margin.top - margin.bottom;
+    var margin = {top: 50, right: 0, bottom: 0, left: 0},
+             w = 1080 - margin.left - margin.right,
+             h = 720 - margin.top - margin.bottom;
   
     // create the svg
     var svg = d3.select(options.container).append("svg")
                 .attr('height', h + margin.top + margin.bottom)
                 .attr('width', w + margin.left + margin.right)
+                .style("background-color","black")
   
     // set the ranges for the scales
-    var xScale = d3.scaleLinear().range([10, 100]);
+    var xScale = d3.scaleLinear().range([10, 130]);
   
     var focus = svg.append('g')
                    .attr("transform", "translate(" + [w/2, h/2+margin.top] + ")")
+                   
   
     // var colorMap = ['red', '#a38b07'];
     var colorMap = [
-        '#000000', '#000066','#000099','#0000CC','#0099FF',
-        '#00FFFF','#00FF66','#00FF33','#33FF33','#99FF99',
-        '#FFFFCC','#FFFF66','#FFFF00','#FFCC33','#FFCCCC',
-        '#FF6666','#FF3333','#FF0000'];
+        // '#000000',
+        // '#000066',
+        // '#000099',
+        // '#0000CC',
+        '#0099FF',
+        '#00FFFF',
+        '#00FF66',
+        '#00FF33',
+        '#33FF33',
+        '#99FF99',
+        '#FFFFCC',
+        '#FFFF66',
+        '#FFFF00',
+        '#FFCC33',
+        '#FFCCCC',
+        '#FF6666',
+        '#FF3333',
+        '#FF0000'
+      ];
   
     // seeded random number generator
     var arng = new alea('hello.');
@@ -27,6 +44,7 @@ function WordCloud(options) {
     var data;
 
     var global_temp_font_size, global_temp_color;
+    var font_name = "san serif"
 
     d3.json(options.data, function(error, d) {
       if (error) throw error;
@@ -42,7 +60,7 @@ function WordCloud(options) {
                  .words(word_entries)
                  .fontSize(function(d) { return xScale(+d.value); })
                  .text(function(d) { return d.key; })
-                 .font("Impact")
+                 .font(font_name)
                  .random(arng)
                  .on("end", function(output) {
                    // sometimes the word cloud can't fit all the words- then redraw
@@ -65,8 +83,8 @@ function WordCloud(options) {
            .data(words)
            .enter().append("text")
            .style("font-size", function(d) { return xScale(d.value) + "px"; })
-           .style("font-family", "Impact")
-           .style("fill", function(d, i) { return colorMap[~~(arng() *18)]; })
+           .style("font-family", "sans serif")
+           .style("fill", function(d, i) { return colorMap[~~(arng() *colorMap.length)]; })
            .attr("text-anchor", "middle")
            .attr("transform", function(d) {
              return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
@@ -90,21 +108,25 @@ function WordCloud(options) {
         
         d3.select(this).classed("word-hovered", true)
         .transition(`mouseover-${d.key}`).duration(1000).attr(
-            "style", function(d,i) { return "font-size : " + (parsed_font_size+15) + "px; font-family : Impact; fill : " + temp_color + ";" }
+            "style", function(d,i) { return "font-size : " + (parsed_font_size+15) + "px; font-family : "+font_name+"; fill : " + temp_color + ";" }
             );
 
         var group = focus.append('g').attr('id', 'story-titles');
         var base = d.y - d.size;
 
+        var rect_font_size = 30
         group.selectAll('text')
            .data(data['sample_title'][d.key])
            .enter().append('text')
-           .attr('x', d.x)
+           .attr('x', d.x + 250)
            .attr('y', function(title, i) {
-             return (base - i*14);
+             return (base + i*rect_font_size);
            })
+           .attr('font-weight', 'bold')
            .attr('text-anchor', 'middle')
-           .text(function(title) { return title; });
+           .style("font-size", rect_font_size+'px')
+           .style("font-family",font_name)
+           .text(function(title,i) { return (i+1)+"."+title; });
   
       var bbox = group.node().getBBox();
       var bboxPadding = 5;
@@ -122,7 +144,7 @@ function WordCloud(options) {
   
     function handleMouseOut(d) {
       d3.select(this).classed("word-hovered", false).interrupt(`mouseover-${d.key}`).attr(
-            "style", function(d,i) { return "font-size : " + global_temp_font_size + "px; font-family : Impact; fill : " + global_temp_color + ";" }
+            "style", function(d,i) { return "font-size : " + global_temp_font_size + "px; font-family : "+font_name+"; fill : " + global_temp_color + ";" }
             )
       d3.select('#story-titles').remove();
     }

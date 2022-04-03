@@ -222,6 +222,9 @@
     }
     
     function cloudRotate() {
+      rotateArray=[0,0,90];
+      // console.log(M0ath.random()*rotateArray.length|0);
+      // return rotateArray[Math.random()*rotateArray.length|0];
       return 10;
     }
     
